@@ -18,7 +18,8 @@ We need to migrate the data from SQL database in azure to Azure Data lake storag
 ![image](https://github.com/user-attachments/assets/cf401bc4-6d70-45e9-a41e-b837d528df1b)   ![image](https://github.com/user-attachments/assets/d5db8c0f-6c96-457a-9f49-226ccfb57b74)
 
 ### Synapse Pipeline
-![image](https://github.com/user-attachments/assets/b6da2c3b-72e9-4a74-96e4-cb195291a38e)
+![image](https://github.com/user-attachments/assets/c1ada86c-88d7-456e-82f2-4896176f4ad9)
+
 
 ### SQL Database
 ![image](https://github.com/user-attachments/assets/3cdeab79-c234-4044-b3b6-6cb40281e303)
