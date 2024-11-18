@@ -10,12 +10,25 @@
 						"type": "DatasetReference"
 					},
 					"name": "BookingsData"
+				},
+				{
+					"dataset": {
+						"referenceName": "BookingsDataSynapse",
+						"type": "DatasetReference"
+					},
+					"name": "synapseLookup"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
 					"name": "BadRecordsStream"
+				},
+				{
+					"name": "derivedColumns"
+				},
+				{
+					"name": "lookupsynapse"
 				}
 			],
 			"scriptLines": [
@@ -38,8 +51,52 @@
 				"     changeFeedStartFromTheBeginning: true,",
 				"     format: 'document',",
 				"     systemColumns: false) ~> BookingsData",
-				"BookingsData split(ERROR_FUNCTION(''),",
-				"     disjoint: true) ~> BadRecordsStream@(BadRecords, AcceptedRecords)"
+				"source(output(",
+				"          booking_id as string,",
+				"          property_id as string,",
+				"          customer_id as integer,",
+				"          owner_id as string,",
+				"          check_in_date as date,",
+				"          check_out_date as date,",
+				"          booking_date as timestamp,",
+				"          amount as double,",
+				"          currency as string,",
+				"          city as string,",
+				"          country as string,",
+				"          full_address as string,",
+				"          stay_duration as long,",
+				"          booking_year as integer,",
+				"          booking_month as integer,",
+				"          timestamp as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     staged: true) ~> synapseLookup",
+				"BookingsData split(check_in_date > check_out_date,",
+				"     disjoint: true) ~> BadRecordsStream@(BadRecords, AcceptedRecords)",
+				"BadRecordsStream@AcceptedRecords derive(stay_duration = (toTimestamp(check_out_date) - toTimestamp(check_in_date))/86400000,",
+				"          booking_year = year(toTimestamp(booking_date)),",
+				"          booking_month = month(toTimestamp(booking_date)),",
+				"          full_address = concat(property_location.city, ',' , property_location.country),",
+				"          city = property_location.city,",
+				"          country = property_location.country,",
+				"          booking_id = booking_id,",
+				"          booking_date = booking_date,",
+				"          check_out_date = check_out_date,",
+				"          customer_id = customer_id,",
+				"          timestamp = timestamp,",
+				"          owner_id = owner_id,",
+				"          check_in_date = check_in_date,",
+				"          property_id = property_id,",
+				"          amount = amount,",
+				"          currency = currency) ~> derivedColumns",
+				"derivedColumns, synapseLookup lookup(derivedColumns@booking_id == synapseLookup@booking_id,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     desc(synapseLookup@timestamp, true),",
+				"     broadcast: 'auto')~> lookupsynapse"
 			]
 		}
 	}
