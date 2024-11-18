@@ -1,0 +1,33 @@
+{
+	"name": "bookingsDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CosmosDbNoSql",
+						"type": "DatasetReference"
+					},
+					"name": "BookingsData"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "BadRecordsStream"
+				}
+			],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     enableChangeFeed: true,",
+				"     changeFeedStartFromTheBeginning: true,",
+				"     format: 'document',",
+				"     systemColumns: false) ~> BookingsData",
+				"BookingsData split(ERROR_FUNCTION(''),",
+				"     disjoint: true) ~> BadRecordsStream@(BadRecords, AccepedRecords)"
+			]
+		}
+	}
+}
