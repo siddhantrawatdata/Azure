@@ -29,6 +29,12 @@
 				},
 				{
 					"name": "lookupsynapse"
+				},
+				{
+					"name": "alterForUpdate"
+				},
+				{
+					"name": "FinalColumnList"
 				}
 			],
 			"scriptLines": [
@@ -96,7 +102,29 @@
 				"     multiple: false,",
 				"     pickup: 'first',",
 				"     desc(synapseLookup@timestamp, true),",
-				"     broadcast: 'auto')~> lookupsynapse"
+				"     broadcast: 'auto')~> lookupsynapse",
+				"lookupsynapse alterRow(insertIf(isNull(synapseLookup@booking_id)),",
+				"     updateIf(not(isNull(synapseLookup@booking_id)))) ~> alterForUpdate",
+				"alterForUpdate select(mapColumn(",
+				"          booking_id = derivedColumns@booking_id,",
+				"          property_id = derivedColumns@property_id,",
+				"          customer_id = derivedColumns@customer_id,",
+				"          owner_id = derivedColumns@owner_id,",
+				"          check_in_date = derivedColumns@check_in_date,",
+				"          check_out_date = derivedColumns@check_out_date,",
+				"          booking_date = derivedColumns@booking_date,",
+				"          amount = derivedColumns@amount,",
+				"          currency = derivedColumns@currency,",
+				"          timestamp = derivedColumns@timestamp,",
+				"          stay_duration = derivedColumns@stay_duration,",
+				"          booking_year = derivedColumns@booking_year,",
+				"          booking_month = derivedColumns@booking_month,",
+				"          full_address = derivedColumns@full_address,",
+				"          city = derivedColumns@city,",
+				"          country = derivedColumns@country",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> FinalColumnList"
 			]
 		}
 	}
