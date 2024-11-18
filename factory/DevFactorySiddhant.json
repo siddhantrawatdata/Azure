@@ -1,0 +1,9 @@
+{
+	"name": "DevFactorySiddhant",
+	"location": "northeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0004aad1-4b8c-4a9a-8b80-774be689068f",
+		"tenantId": "d56be9b0-6e6d-4476-8931-f13a228546b2"
+	}
+}

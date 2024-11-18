@@ -1,0 +1,36 @@
+{
+	"name": "dest_dataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dest_db",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [
+			{
+				"name": "YEAR_ID",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "MONTH_ID",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TOTALSALES",
+				"type": "NUMBER",
+				"precision": 18,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "PUBLIC",
+			"table": "SALESAGGREGATE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
